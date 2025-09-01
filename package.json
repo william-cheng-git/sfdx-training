@@ -11,10 +11,18 @@
     "test:unit:debug": "sfdx-lwc-jest --debug",
     "test:unit:coverage": "sfdx-lwc-jest --coverage",
     "prettier": "prettier --write \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}\"",
-    "prettier:verify": "prettier --check \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}\"",
+    "prettier:verify:staged": "prettier --check",
     "prepare": "husky || true",
-    "precommit": "lint-staged",
-     "deploy:diff": "node scripts/deployDiff.js v1.0.0"
+    "lint-staged:commit": "lint-staged -c .lint-staged/commit.json",
+    "lint-staged:push": "lint-staged -c .lint-stagedrc/push.json",
+    "pmd": "pmd check -d . -R ./pmd/master_ruleset.xml --no-progress --no-cache",
+    "pmd:lint-staged": "pmd check -R ./pmd/master_ruleset.xml --no-progress --cache ./pmd/cache",
+    "build": "npm run pmd && npm run prettier",
+    "clean": "rm -Rf deploy/package/*",
+    "deploy:diff:gen": "sf sgd source delta --to HEAD --from HEAD~1 --output-dir deploy/package --generate-delta",
+    "deploy:interpolate": "node deploy/scripts/interpolate.mjs",
+    "deploy:deploy": "node deploy/scripts/deploy.mjs",
+    "deploy:diff": "npm run clean && npm run deploy:diff:gen && npm run deploy:interpolate && npm run deploy:deploy"
   },
   "devDependencies": {
     "@lwc/eslint-plugin-lwc": "^3.1.0",
@@ -28,18 +36,10 @@
     "eslint-plugin-jest": "^28.14.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",
-    "prettier": "^3.5.3",
-    "prettier-plugin-apex": "^2.2.6"
+    "prettier": "3.6.2",
+    "prettier-plugin-apex": "2.2.6"
   },
-  "lint-staged": {
-    "**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}": [
-      "prettier --write"
-    ],
-    "**/{aura,lwc}/**/*.js": [
-      "eslint"
-    ],
-    "**/lwc/**": [
-        "sfdx-lwc-jest -- --bail --findRelatedTests --passWithNoTests"
-    ]
+  "dependencies": {
+    "replace-in-file": "^8.3.0"
   }
 }

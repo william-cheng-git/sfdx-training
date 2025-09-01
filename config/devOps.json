@@ -1,0 +1,5 @@
+{
+  "deployDir": "deploy",
+  "deployPackageDir": "deploy/package",
+  "runSpecifiedTests": true
+}
