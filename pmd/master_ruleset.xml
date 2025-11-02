@@ -14,6 +14,12 @@
     <exclude-pattern>.*/.sfdx/.*</exclude-pattern>
 
     <!-- standard apex rules -->
-    <rule ref="category/apex/security.xml" />
+
+
+    <!-- custom apex rules -->
+    <rule ref="pmd/custom_apex_ruleset.xml" />
+
+    <!-- standard visualforce rules -->
+    <rule ref="category/visualforce/security.xml" />
 
 </ruleset>
