@@ -56,14 +56,18 @@ jobs:
             --output-file sfca_results.html \
             --output-file sfca_results.json \
             --target
-          # echo "num-violations=4" >> $GITHUB_OUTPUT
-          echo "Num violation:"
-          echo "${{ num-violations }}"
+          HIGH=$(grep -c ',High,' pmd-results.csv || true)
+          MEDIUM=$(grep -c ',Medium,' pmd-results.csv || true)
+          LOW=$(grep -c ',Low,' pmd-results.csv || true)
+      
+          echo "num-high=$HIGH" >> $GITHUB_OUTPUT
+          echo "num-medium=$MEDIUM" >> $GITHUB_OUTPUT
+          echo "num-low=$LOW" >> $GITHUB_OUTPUT
 
       - name: Debug
         run: |
           echo "steps.run-code-analyzer.outputs.num-violations=${{ steps.run-code-analyzer.outputs.num-violations }}"
-          echo "steps.run-code-analyzer.outputs.exit-code=${{ steps.run-code-analyzer.outputs.exit-code }}"
+          echo "steps.run-code-analyzer.outputs.num-high=${{ steps.run-code-analyzer.outputs.num-high }}"
           echo "steps.run-code-analyzer.outputs=${{ steps.run-code-analyzer.outputs }}"
           echo '${{ toJSON(steps.run-code-analyzer.outputs) }}'
 
