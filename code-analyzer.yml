@@ -256,7 +256,7 @@ engines:
     # Not all custom rules can be fully defined within an xml ruleset file. For example, Java based rules may be defined in jar files.
     # In these cases, you will need to also add your additional files to the Java classpath using the 'java_classpath_entries' field.
     # See https://pmd.github.io/pmd/pmd_userdocs_making_rulesets.html to learn more about PMD rulesets.
-    custom_rulesets: [pmd/master_ruleset.xml]
+    custom_rulesets: [../../pmd/master_ruleset.xml]
 
   # ======================================================================
   # CPD ENGINE CONFIGURATION
