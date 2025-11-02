@@ -1,56 +1,50 @@
-name: Salesforce Code Analyzer
-
+name: Salesforce Code Analyzer Workflow
 on:
-  push:
-    branches: [ main ]
   pull_request:
-    types: [opened, synchronize, reopened]
-
 jobs:
-  analyze:
-    name: Run Salesforce Code Analyzer (PMD)
+  salesforce-code-analyzer-workflow:
+    permissions:
+      pull-requests: write # Grants permission to create a pull request review. Only necessary if running against pull requests.
+      contents: read # Grants permission to check out the repository. Only necessary for private repos.
+      actions: read # Grants permission to read the in-progress actions. Only necessary for private repos.
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Check out files
+        uses: actions/checkout@v5
+
+      # PREREQUISITES - Only needed if the runner doesn't already satisfy these requirements.
+      - name: Ensure node v20.9.0 or greater
+        uses: actions/setup-node@v5
         with:
-          fetch-depth: 0  # Needed to compare PR diffs
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+          node-version: '>=20.9.0'
+      - name: Ensure java v11 or greater
+        uses: actions/setup-java@v5
         with:
-          node-version: 20
+          java-version: '>=11'
+          distribution: 'zulu'
+      - name: Ensure python v3.10 or greater
+        uses: actions/setup-python@v6
+        with:
+          python-version: '>=3.10'
 
-      - name: Install Salesforce Code Analyzer
-        run: npm install -g @salesforce/sfdx-scanner
+      - name: Install Salesforce CLI
+        run: npm install -g @salesforce/cli@latest
 
-      - name: Get changed files
-        id: changed
-        run: |
-          git fetch origin ${{ github.base_ref }} --depth=1
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.(cls|trigger|page|cmp|js|ts|xml)$' || true)
-          echo "changed_files<<EOF" >> $GITHUB_OUTPUT
-          echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+      - name: Install Latest Salesforce Code Analyzer CLI Plugin
+        run: sf plugins install code-analyzer@latest
 
-      - name: Run Salesforce Code Analyzer (PMD rules)
-        if: steps.changed.outputs.changed_files != ''
-        run: |
-          echo "Analyzing changed files:"
-          echo "${{ steps.changed.outputs.changed_files }}"
-          echo "${{ steps.changed.outputs.changed_files }}" | xargs -r sfdx scanner:run \
-            --engine pmd \
-            --ruleset rulesets/custom-ruleset.xml \
-            --format csv \
-            --target \
-            || echo "PMD_SCAN_FAILED=true" >> $GITHUB_ENV
+      - name: Run Salesforce Code Analyzer
+        id: run-code-analyzer
+        uses: forcedotcom/run-code-analyzer@v2
+        with:
+          run-arguments: --workspace . --view detail --output-file sfca_results.html --output-file sfca_results.json
+          results-artifact-name: salesforce-code-analyzer-results
+          github-token: ${{ github.token }}
 
-      - name: Fail if violations found
-        run: |
-          if grep -q ",High," sfdx-scanner.log 2>/dev/null || grep -q ",Medium," sfdx-scanner.log 2>/dev/null; then
-            echo "::error::Code violations detected. Please fix before merging."
-            exit 1
-          else
-            echo "✅ No significant PMD violations found."
-          fi
+      - name: Check the Outputs to Determine Whether to Fail
+        if: |
+          steps.run-code-analyzer.outputs.exit-code > 0 ||
+          steps.run-code-analyzer.outputs.num-sev1-violations > 0 ||
+          steps.run-code-analyzer.outputs.num-sev2-violations > 0 ||
+          steps.run-code-analyzer.outputs.num-violations > 10
+        run: exit 1
