@@ -31,7 +31,7 @@
     message="apiVersion lower than min allowed API version"
     class="net.sourceforge.pmd.lang.xml.rule.DomXPathRule"
   >
-    <priority>1</priority>
+    <priority>5</priority>
     <properties>
       <property
         name="minAPIVersion"
