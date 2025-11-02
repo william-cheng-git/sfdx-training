@@ -55,7 +55,7 @@ jobs:
             --view detail \
             --output-file sfca_results.html \
             --output-file sfca_results.json \
-            --target \
+            --target
           echo "$num-violations=3" >> $GITHUB_OUTPUT
 
       - name: Debug
