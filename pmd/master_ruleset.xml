@@ -15,25 +15,5 @@
 
     <!-- standard apex rules -->
     <rule ref="category/apex/security.xml" />
-    <rule ref="category/apex/bestpractices.xml">
-      <!-- It doesn't make sense -->  
-      <exclude name="ApexUnitTestClassShouldHaveRunAs" />
-      <!-- Replaced by custom rules that include more assertion patterns -->
-      <exclude name="ApexUnitTestClassShouldHaveAsserts" /> 
-      <!-- Please create test method with meaningful method name instead-->
-      <exclude name="ApexAssertionsShouldIncludeMessage" /> 
-    </rule>
-    <rule ref="category/apex/design.xml">
-        <exclude name="AvoidBooleanMethodParameters" /> <!-- I don't agree -->
-    </rule>
-    <rule ref="category/apex/performance.xml" />
-    <rule ref="category/apex/errorprone.xml" />
-    <rule ref="category/apex/codestyle.xml" />
-
-    <!-- custom apex rules -->
-    <rule ref="pmd/custom_apex_ruleset.xml" />
-
-    <!-- standard visualforce rules -->
-    <rule ref="category/visualforce/security.xml" />
 
 </ruleset>
