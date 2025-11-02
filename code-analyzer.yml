@@ -59,7 +59,7 @@ rules:
   # ======================================================================
   pmd:
     ApexDoc:
-      tags: ["Disabled"]
+      tags: ["Disabled", "Recommended"]
     ApexUnitTestClassShouldHaveRunAs:
       tags: ["Disabled"]
     AvoidBooleanMethodParameters:
