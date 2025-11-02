@@ -1,0 +1,34 @@
+name: Salesforce Code Analyzer
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  code-analyzer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install SFDX Code Analyzer
+        run: npm install -g sfdx-scanner
+
+      - name: Run Salesforce Code Analyzer (SFDX Scanner)
+        run: |
+          mkdir -p sfdx-scanner-report
+          # adjust the --target pattern to match your Salesforce metadata paths
+          sfdx scanner:run --target "force-app/**" --format json --output-file sfdx-scanner-report/results.json || true
+
+      - name: Upload scanner results
+        uses: actions/upload-artifact@v4
+        with:
+          name: sfdx-scanner-results
+          path: sfdx-scanner-report/results.json
