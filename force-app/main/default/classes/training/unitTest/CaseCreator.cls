@@ -56,7 +56,7 @@ public with sharing class CaseCreator {
     }
   }
 
-  @future
+  @Future
   public static void doSomethingFuture(String something) {
     (new CaseCreator()).doSomething(something);
   }

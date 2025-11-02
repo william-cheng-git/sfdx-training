@@ -57,7 +57,13 @@ rules:
   # ======================================================================
   # PMD ENGINE RULE OVERRIDES
   # ======================================================================
-  pmd: {} # Remove this empty object {} when you are ready to specify your first rule override
+  pmd:
+    ApexDoc:
+      tags: ["Disabled"]
+    ApexUnitTestClassShouldHaveRunAs:
+      tags: ["Disabled"]
+    AvoidBooleanMethodParameters:
+      tags: ["Disabled"]
 
   # ======================================================================
   # CPD ENGINE RULE OVERRIDES
