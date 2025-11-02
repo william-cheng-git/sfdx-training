@@ -39,7 +39,7 @@ jobs:
         id: changed
         run: |
           git fetch origin ${{ github.base_ref }} --depth=1
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.(cls|trigger|html|htm|xhtml|xht|shtml|cmp|js|cjs|mjs|ts|page|component|xml)$' || true)
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.(cls|trigger|html|htm|xhtml|xht|shtml|cmp|js|cjs|mjs|ts|page|component|xml)$' | grep -E 'force-app' || true)
           echo "changed_files<<EOF" >> $GITHUB_OUTPUT
           echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
