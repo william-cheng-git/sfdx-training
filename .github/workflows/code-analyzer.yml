@@ -62,6 +62,7 @@ jobs:
           echo "steps.run-code-analyzer.outputs.num-violations=${{ steps.run-code-analyzer.outputs.num-violations }}"
           echo "steps.run-code-analyzer.outputs.exit-code=${{ steps.run-code-analyzer.outputs.exit-code }}"
           echo "steps.run-code-analyzer.outputs=${{ steps.run-code-analyzer.outputs }}"
+          echo '${{ toJSON(steps.run-code-analyzer.outputs) }}'
 
       - name: Check the Outputs to Determine Whether to Fail
         if: |
