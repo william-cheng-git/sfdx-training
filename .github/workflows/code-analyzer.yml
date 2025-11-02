@@ -60,6 +60,7 @@ jobs:
       - name: Debug
         run: |
           echo "steps.run-code-analyzer.outputs.num-violations=${{ steps.run-code-analyzer.outputs.num-violations }}"
+          echo "steps.run-code-analyzer.outputs=${{ steps.run-code-analyzer.outputs }}"
 
       - name: Check the Outputs to Determine Whether to Fail
         if: |
