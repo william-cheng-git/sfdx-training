@@ -57,6 +57,8 @@ jobs:
             --output-file sfca_results.json \
             --target
           echo "num-violations=4" >> $GITHUB_OUTPUT
+          echo "Num violation:"
+          echo "${{ num-violations }}"
 
       - name: Debug
         run: |
