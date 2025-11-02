@@ -57,6 +57,10 @@ jobs:
             --output-file sfca_results.json \
             --target \
 
+      - name: Debug
+        run: |
+          echo "steps.run-code-analyzer.outputs.num-violations=${{ steps.run-code-analyzer.outputs.num-violations }}"
+
       - name: Check the Outputs to Determine Whether to Fail
         if: |
           steps.run-code-analyzer.outputs.exit-code > 0 ||
