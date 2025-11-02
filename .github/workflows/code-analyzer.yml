@@ -33,18 +33,30 @@ jobs:
       - name: Install Latest Salesforce Code Analyzer CLI Plugin
         run: sf plugins install code-analyzer@latest
 
-      - name: Run Salesforce Code Analyzer
+      - name: Get changed files
+        id: changed
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.(cls|trigger|html|htm|xhtml|xht|shtml|cmp|js|cjs|mjs|ts|page|component|xml)$' || true)
+          echo "changed_files<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Run Salesforce Code Analyzer on changed files
+        if: steps.changed.outputs.changed_files != ''
         id: run-code-analyzer
-        uses: forcedotcom/run-code-analyzer@v2
-        with:
-          run-arguments: --workspace . --view detail --output-file sfca_results.html --output-file sfca_results.json
-          results-artifact-name: salesforce-code-analyzer-results
-          github-token: ${{ github.token }}
+        run: |
+          echo "Analyzing changed files:"
+          echo "${{ steps.changed.outputs.changed_files }}"
+          echo "${{ steps.changed.outputs.changed_files }}" | xargs -r sfdx scanner:run \
+            --workspace . \
+            --view detail \
+            --output-file sfca_results.html \
+            --output-file sfca_results.json \
+            --target \
 
       - name: Check the Outputs to Determine Whether to Fail
         if: |
           steps.run-code-analyzer.outputs.exit-code > 0 ||
-          steps.run-code-analyzer.outputs.num-sev1-violations > 0 ||
-          steps.run-code-analyzer.outputs.num-sev2-violations > 0 ||
-          steps.run-code-analyzer.outputs.num-violations > 10
+          steps.run-code-analyzer.outputs.num-violations > 0
         run: exit 1
