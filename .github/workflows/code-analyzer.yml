@@ -50,7 +50,7 @@ jobs:
         run: |
           echo "Analyzing changed files:"
           echo "${{ steps.changed.outputs.changed_files }}"
-          echo "${{ steps.changed.outputs.changed_files }}" | xargs -r sfdx scanner:run \
+          echo "${{ steps.changed.outputs.changed_files }}" | xargs -r sf code-analyzer:run \
             --workspace . \
             --view detail \
             --output-file sfca_results.html \
