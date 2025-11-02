@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Check out files
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
 
       # PREREQUISITES - Only needed if the runner doesn't already satisfy these requirements.
       - name: Ensure node v20.9.0 or greater
