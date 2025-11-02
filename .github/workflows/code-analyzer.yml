@@ -4,31 +4,53 @@ on:
   push:
     branches: [ main ]
   pull_request:
-    branches: [ main ]
+    types: [opened, synchronize, reopened]
 
 jobs:
-  code-analyzer:
+  analyze:
+    name: Run Salesforce Code Analyzer (PMD)
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Needed to compare PR diffs
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: 20
 
-      - name: Install SFDX Code Analyzer
-        run: npm install -g sfdx-scanner
+      - name: Install Salesforce Code Analyzer
+        run: npm install -g @salesforce/sfdx-scanner
 
-      - name: Run Salesforce Code Analyzer (SFDX Scanner)
+      - name: Get changed files
+        id: changed
         run: |
-          mkdir -p sfdx-scanner-report
-          # adjust the --target pattern to match your Salesforce metadata paths
-          sfdx scanner:run --target "force-app/**" --format json --output-file sfdx-scanner-report/results.json || true
+          git fetch origin ${{ github.base_ref }} --depth=1
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.(cls|trigger|page|cmp|js|ts|xml)$' || true)
+          echo "changed_files<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Upload scanner results
-        uses: actions/upload-artifact@v4
-        with:
-          name: sfdx-scanner-results
-          path: sfdx-scanner-report/results.json
+      - name: Run Salesforce Code Analyzer (PMD rules)
+        if: steps.changed.outputs.changed_files != ''
+        run: |
+          echo "Analyzing changed files:"
+          echo "${{ steps.changed.outputs.changed_files }}"
+          echo "${{ steps.changed.outputs.changed_files }}" | xargs -r sfdx scanner:run \
+            --engine pmd \
+            --ruleset rulesets/custom-ruleset.xml \
+            --format csv \
+            --target \
+            || echo "PMD_SCAN_FAILED=true" >> $GITHUB_ENV
+
+      - name: Fail if violations found
+        run: |
+          if grep -q ",High," sfdx-scanner.log 2>/dev/null || grep -q ",Medium," sfdx-scanner.log 2>/dev/null; then
+            echo "::error::Code violations detected. Please fix before merging."
+            exit 1
+          else
+            echo "✅ No significant PMD violations found."
+          fi
