@@ -1,4 +1,4 @@
-@isTest
+@IsTest
 private class CaseDAOTest {
   @IsTest
   private static void testFindBySubject() {
