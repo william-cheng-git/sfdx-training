@@ -40,25 +40,23 @@ jobs:
         run: |
           git fetch origin ${{ github.base_ref }} --depth=1
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.(cls|trigger|html|htm|xhtml|xht|shtml|cmp|js|cjs|mjs|ts|page|component|xml)$' | grep -E 'force-app' || true)
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+          TARGET_ARGS=$(for f in $CHANGED_FILES; do echo -n "--target $f "; done)
+          echo "target=$TARGET_ARGS" >> $GITHUB_OUTPUT
           echo "changed_files<<EOF" >> $GITHUB_OUTPUT
           echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT  
 
       - name: Run Salesforce Code Analyzer on changed files
         if: steps.changed.outputs.changed_files != ''
         id: run-code-analyzer
-        run: |
-          echo "Analyzing changed files:"
-          echo "${{ steps.changed.outputs.changed_files }}"
-          echo "${{ steps.changed.outputs.changed_files }}" | xargs -r sf code-analyzer:run \
-            --workspace . \
-            --view detail \
-            --output-file sfca_results.html \
-            --output-file sfca_results.json \
-            --target
-
+        uses: forcedotcom/run-code-analyzer@v2
+        with:
+          run-arguments: --workspace . ${{ steps.changed.outputs.target }} --view detail --output-file sfca_results.html --output-file sfca_results.json --severity-threshold 5
+          results-artifact-name: salesforce-code-analyzer-results
+          github-token: ${{ github.token }}
       - name: Check the Outputs to Determine Whether to Fail
         if: |
-          steps.run-code-analyzer.outputs.exit-code > 0 ||
-          steps.run-code-analyzer.outputs.num-violations > 0
+          steps.run-code-analyzer.outputs.exit-code > 0
         run: exit 1
