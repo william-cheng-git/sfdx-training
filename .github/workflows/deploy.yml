@@ -1,5 +1,4 @@
-# app-trigger.yml in the app-repo/.github/workflows/
-name: Trigger Remote Deployment
+name: Deployment
 on:
   workflow_dispatch:
     inputs:
@@ -10,6 +9,12 @@ on:
         options:
           - Dev
           - Prod
+      BASE_BRANCH_NAME:
+        description: Branch to diff from
+        required: true
+        type: choice
+        options:
+          - main
       TEST_LEVEL:
         description: Deployment Test Level
         required: true
@@ -20,10 +25,11 @@ on:
           - RunAllTestsInOrg
 
 jobs:
-  trigger_deploy:
+  deploy:
     uses: william-cheng-git/sfdx-deployment/.github/workflows/deploy.yml@main
     with:
       BRANCH_NAME: ${{ github.ref_name }}
+      BASE_BRANCH_NAME: ${{ inputs.BASE_BRANCH_NAME }}
       TEST_LEVEL: ${{ inputs.TEST_LEVEL }}
       SF_USERNAME: omegawill@creative-otter-5qmme6.com
       ENVIRONMENT: ${{ inputs.ENVIRONMENT }}

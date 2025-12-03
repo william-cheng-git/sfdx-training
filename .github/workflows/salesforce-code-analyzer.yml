@@ -1,0 +1,13 @@
+name: Salesforce Code Analyzer
+on:
+  workflow_dispatch
+
+jobs:
+  scan:
+    uses: william-cheng-git/sfdx-deployment/.github/workflows/salesforce-code-analyzer.yml@main
+    with:
+      BRANCH_NAME: ${{ github.ref_name }}
+    permissions:
+      pull-requests: write # Grants permission to create a pull request review. Only necessary if running against pull requests.
+      contents: read # Grants permission to check out the repository. Only necessary for private repos.
+      actions: read # Grants permission to read the in-progress actions. Only necessary for private repos.
