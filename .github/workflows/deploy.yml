@@ -45,6 +45,8 @@ on:
 
 jobs:
   setup:
+    environment: ${{ ENVIRONMENT }}
+  
     name: Setup
     runs-on: ubuntu-latest
     outputs:
