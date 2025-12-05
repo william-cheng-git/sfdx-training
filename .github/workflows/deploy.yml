@@ -62,7 +62,7 @@ jobs:
       DEPLOYMENT_SCOPE: ${{ inputs.DEPLOYMENT_SCOPE }}
       DEPLOYMENT_MODE: ${{ inputs.DEPLOYMENT_MODE }}
       JOB_ID: ${{ inputs.JOB_ID }}
-      SGD_IGNORE_FILE: ${{ vars.SGD_IGNORE_FILE }}
+      SGD_IGNORE_FILE: ${{ needs.setup.outputs.SGD_IGNORE_FILE }}
     secrets:
       SF_SERVER_KEY: ${{ secrets.SF_SERVER_KEY }}
       SF_CONSUMER_KEY: ${{ secrets.SF_CONSUMER_KEY }}
