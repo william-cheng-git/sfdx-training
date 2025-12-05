@@ -2,6 +2,31 @@ name: Deployment
 on:
   workflow_dispatch:
     inputs:
+      BASE_BRANCH_NAME:
+        description: Branch to diff from
+        required: true
+        type: choice
+        options:
+          - main
+      DEPLOYMENT_SCOPE:
+        description: Deployment scope
+        required: true
+        type: choice
+        options:
+          - FULL
+          - DELTA
+      DEPLOYMENT_MODE:
+        description: Deployment mode
+        required: true
+        type: choice
+        options:
+          - DEPLOY
+          - VALIDATE
+          - QUICK
+      JOB_ID:
+        description: Deployment Job Id, required if using quick deploy
+        required: false
+        type: string
       ENVIRONMENT:
         description: Target deployment environment
         required: true
@@ -9,12 +34,6 @@ on:
         options:
           - Dev
           - Prod
-      BASE_BRANCH_NAME:
-        description: Branch to diff from
-        required: true
-        type: choice
-        options:
-          - main
       TEST_LEVEL:
         description: Deployment Test Level
         required: true
@@ -33,6 +52,9 @@ jobs:
       TEST_LEVEL: ${{ inputs.TEST_LEVEL }}
       SF_USERNAME: omegawill@creative-otter-5qmme6.com
       ENVIRONMENT: ${{ inputs.ENVIRONMENT }}
+      DEPLOYMENT_SCOPE: ${{ inputs.DEPLOYMENT_SCOPE }}
+      DEPLOYMENT_MODE: ${{ inputs.DEPLOYMENT_MODE }}
+      JOB_ID: ${{ inputs.JOB_ID }}
     secrets:
       SF_SERVER_KEY: ${{ secrets.SF_SERVER_KEY }}
       SF_CONSUMER_KEY: ${{ secrets.SF_CONSUMER_KEY }}
