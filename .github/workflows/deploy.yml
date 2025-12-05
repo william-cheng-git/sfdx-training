@@ -45,7 +45,7 @@ on:
 
 jobs:
   setup:
-    environment: ${{ ENVIRONMENT }}
+    environment: ${{ inputs.ENVIRONMENT }}
   
     name: Setup
     runs-on: ubuntu-latest
