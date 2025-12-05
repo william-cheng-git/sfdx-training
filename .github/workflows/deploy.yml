@@ -52,7 +52,8 @@ jobs:
     steps:
       - name: Evaluate environment variables
         run: |
-          echo "SGD_IGNORE_FILE=${{ vars.SGD_IGNORE_FILE }}" 
+          echo "SGD_IGNORE_FILE=${{ vars.SGD_IGNORE_FILE }}"
+          echo "SGD_IGNORE_FILE=${{ env.SGD_IGNORE_FILE }}"
           echo "SGD_IGNORE_FILE=${{ vars.SGD_IGNORE_FILE }}"  >> "$GITHUB_OUTPUT"
         
       
