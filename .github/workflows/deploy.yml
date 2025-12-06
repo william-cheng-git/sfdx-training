@@ -44,20 +44,7 @@ on:
           - RunAllTestsInOrg
 
 jobs:
-  setup:
-    environment: ${{ inputs.ENVIRONMENT }}
-  
-    name: Setup
-    runs-on: ubuntu-latest
-    outputs:
-      SGD_IGNORE_FILE: ${{ vars.SGD_IGNORE_FILE }}
-    steps:
-      - name: Evaluate environment variables
-        run: |
-          echo "SGD_IGNORE_FILE=${{ vars.SGD_IGNORE_FILE }}"  >> "$GITHUB_OUTPUT"
-
   deploy:
-    needs: setup
     uses: william-cheng-git/sfdx-deployment/.github/workflows/deploy.yml@main
     with:
       BRANCH_NAME: ${{ github.ref_name }}
@@ -68,7 +55,6 @@ jobs:
       DEPLOYMENT_SCOPE: ${{ inputs.DEPLOYMENT_SCOPE }}
       DEPLOYMENT_MODE: ${{ inputs.DEPLOYMENT_MODE }}
       JOB_ID: ${{ inputs.JOB_ID }}
-      SGD_IGNORE_FILE: ${{ needs.setup.outputs.SGD_IGNORE_FILE }}
     secrets:
       SF_SERVER_KEY: ${{ secrets.SF_SERVER_KEY }}
       SF_CONSUMER_KEY: ${{ secrets.SF_CONSUMER_KEY }}
