@@ -15,6 +15,7 @@ on:
         options:
           - DELTA
           - FULL
+          - ROLLBACK
       DEPLOYMENT_MODE:
         description: Deployment mode
         required: true
