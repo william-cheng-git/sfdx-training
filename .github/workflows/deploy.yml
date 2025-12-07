@@ -40,8 +40,8 @@ on:
         required: true
         type: choice
         options:
-          - NoTestRun
           - RunLocalTests
+          - NoTestRun
           - RunAllTestsInOrg
 
 jobs:
