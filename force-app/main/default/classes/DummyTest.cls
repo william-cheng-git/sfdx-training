@@ -80,5 +80,7 @@ public with sharing class DummyTest {
             // Simulate a long-running test
             Integer j = i * i;
         }
+
+        Assert.assertEquals(1, 2);
     }
 }
