@@ -1,5 +1,6 @@
 @IsTest
-public with sharing class DummyTest {
+public with sharing class DummyTest2 {
+
 
     @IsTest
     static void verySlowTest1() {
