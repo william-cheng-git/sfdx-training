@@ -81,6 +81,6 @@ public with sharing class DummyTest {
             Integer j = i * i;
         }
 
-        Assert.assertEquals(1, 2);
+        Assert.areEqual(1, 2);
     }
 }
