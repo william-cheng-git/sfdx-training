@@ -35,6 +35,7 @@ on:
         options:
           - Dev
           - Prod
+          - Trailhead-training2
       TEST_LEVEL:
         description: Deployment Test Level
         required: true
