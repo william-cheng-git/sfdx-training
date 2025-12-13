@@ -44,6 +44,7 @@ on:
           - RunLocalTests
           - NoTestRun
           - RunAllTestsInOrg
+          - ChangedTests
 
 jobs:
   deploy:
