@@ -8,5 +8,12 @@
   "name": "sfdx-training",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "64.0"
+  "sourceApiVersion": "64.0",
+  "replacements": [
+    {
+      "filename": "force-app/main/default/remoteSiteSettings/DummyAPI.remoteSite-meta.xml",
+      "stringToReplace": "DUMMY_API_URL",
+      "replaceWithEnv": "DUMMY_API_URL"
+    }
+  ]
 }
